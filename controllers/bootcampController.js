@@ -1,18 +1,56 @@
 const express = require("express");
+const bootCanps = require("../models/Bootcamps");
 
-exports.getAllBootcamps = (req, res, next) => {
-  return res.json({ msg: "All bootcamps" });
+exports.getAllBootcamps = async (req, res, next) => {
+  try {
+    const bootcamp = await bootCanps.find();
+    res.status(201).json({ mgs: "Fetched Sucessfully", data: bootcamp });
+  } catch (eUnhandledPromiseRejectionWarning) {
+    res.status(400).json({ mgs: "No records found" });
+  }
 };
 
-exports.createBootcamp = (req, res, next) => {
-  return res.json({ msg: "Create new Bootcamp" });
+exports.createBootcamp = async (req, res, next) => {
+  try {
+    const bootcamp = await bootCanps.create(req.body);
+    res.status(201).json({ mgs: "Created Sucessfully", data: bootcamp });
+  } catch (eUnhandledPromiseRejectionWarning) {
+    res.status(400).json({ msg: "Error occured" });
+  }
 };
-exports.updateBootcamp = (req, res, next) => {
-  return res.json({ msg: "Update bootcamp" });
+exports.updateBootcamp = async (req, res, next) => {
+  try {
+    const bootcamp = await bootCanps.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!bootcamp) {
+      return res.status(404).json({ msg: "Not Found" });
+    }
+    res.status(200).json({ mgs: "Updated Sucessfully", data: bootcamp });
+  } catch (eUnhandledPromiseRejectionWarning) {
+    res.status(400).json({ msg: "Error occured" });
+  }
 };
-exports.deleteBootcamp = (req, res, next) => {
-  return res.json({ msg: "Delete bootcamp" });
+exports.deleteBootcamp = async (req, res, next) => {
+  try {
+    const bootcamp = await bootCanps.findByIdAndDelete(req.params.id);
+    if (!bootcamp) {
+      return res.status(404).json({ msg: "Not Found" });
+    }
+    res.status(201).json({ mgs: "Deleted Sucessfully", data: bootcamp });
+  } catch (eUnhandledPromiseRejectionWarning) {
+    res.status(400).json({ msg: "Error occured" });
+  }
 };
-exports.getOneBootcamps = (req, res, next) => {
-  return res.json({ msg: "Get one Bootcamps" });
+exports.getOneBootcamps = async (req, res, next) => {
+  try {
+    const bootcamp = await bootCanps.findById(req.params.id);
+    if (!bootcamp) {
+      return res.status(404).json({ msg: "Not Found" });
+    }
+    res.status(200).json({ mgs: "Created Sucessfully", data: bootcamp });
+  } catch (eUnhandledPromiseRejectionWarning) {
+    res.status(400).json({ msg: "Error occured" });
+  }
 };
